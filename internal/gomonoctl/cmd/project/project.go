@@ -68,7 +68,7 @@ func run(_ *cobra.Command, args []string) {
 	}
 	projectName, workingDir := processProjectParams(name, wd)
 	p := &Project{Name: projectName}
-	fmt.Println("projectName=", projectName, "workingDir", workingDir, "name", name, "wd", wd)
+	fmt.Fprintln(os.Stderr, "projectName=", projectName, "workingDir", workingDir, "name", name, "wd", wd)
 	if service == "" {
 		prompt := &survey.Input{
 			Message: "What is service name ?",
