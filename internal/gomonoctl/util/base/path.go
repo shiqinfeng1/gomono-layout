@@ -35,6 +35,8 @@ func kratosHomeWithDir(dir string) string {
 	return home
 }
 
+// 复制文件从src到dest，并对指定文件的值进行替换
+// 例：replaces=[]string{oldv, newv}, 表示把src中的oldv替换为newv后，写入dst
 func copyFile(src, dst string, replaces []string) error {
 	srcinfo, err := os.Stat(src)
 	if err != nil {

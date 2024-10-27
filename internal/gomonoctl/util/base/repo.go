@@ -101,26 +101,36 @@ func (r *Repo) Clone(ctx context.Context) error {
 }
 
 // CopyTo copies the repository to project path.
+// modPath： 新的项目go.mod中的module名字
 func (r *Repo) CopyTo(ctx context.Context, to string, modPath string, ignores []string) error {
 	if err := r.Clone(ctx); err != nil {
 		return err
 	}
+	// 获取克隆下来的仓库的mod名字
 	mod, err := ModulePath(filepath.Join(r.Path(), "go.mod"))
 	if err != nil {
 		return err
 	}
+	//  mod名字替换为modPath
 	return copyDir(r.Path(), to, []string{mod, modPath}, ignores)
 }
 
-// CopyToV2 copies the repository to project path
-func (r *Repo) CopyToV2(ctx context.Context, to string, modPath string, ignores, replaces []string) error {
+// modPath： 新的项目go.mod中的module名字
+func (r *Repo) CopyServiceTo(ctx context.Context, to string, modPath string, ignores []string) error {
 	if err := r.Clone(ctx); err != nil {
 		return err
 	}
+	// 获取克隆下来的仓库的mod名字
 	mod, err := ModulePath(filepath.Join(r.Path(), "go.mod"))
 	if err != nil {
 		return err
 	}
-	replaces = append([]string{mod, modPath}, replaces...)
-	return copyDir(r.Path(), to, replaces, ignores)
+	//  mod名字替换为modPath
+	if err := copyDir(filepath.Join(r.Path(), "cmd", "server"), filepath.Join(to, "cmd", "server"), []string{mod, modPath}, ignores); err != nil {
+		return err
+	}
+	if err := copyDir(filepath.Join(r.Path(), "internal", "server"), filepath.Join(to, "internal", "server"), []string{mod, modPath}, ignores); err != nil {
+		return err
+	}
+	return nil
 }

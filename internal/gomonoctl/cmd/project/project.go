@@ -11,8 +11,6 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/spf13/cobra"
-
-	"github.com/shiqinfeng1/gomono-layout/internal/gomonoctl/util/base"
 )
 
 // CmdNew represents the new command.
@@ -84,27 +82,12 @@ func run(_ *cobra.Command, args []string) {
 				return
 			}
 		}
-		projectRoot := getgomodProjectRoot(workingDir)
-		if gomodIsNotExistIn(projectRoot) {
-			done <- fmt.Errorf("🚫 go.mod don't exists in %s", projectRoot)
-			return
-		}
-
-		packagePath, e := filepath.Rel(projectRoot, filepath.Join(workingDir, projectName))
-		if e != nil {
-			done <- fmt.Errorf("🚫 failed to get relative path: %v", err)
-			return
-		}
-		packagePath = strings.ReplaceAll(packagePath, "\\", "/")
-
-		mod, e := base.ModulePath(filepath.Join(projectRoot, "go.mod"))
-		if e != nil {
-			done <- fmt.Errorf("🚫 failed to parse `go.mod`: %v", e)
+		if gomodIsNotExistIn(to) {
+			done <- fmt.Errorf("🚫 go.mod don't exists in %s", to)
 			return
 		}
 		// Get the relative path for adding a project based on Go modules
-		p.Path = filepath.Join(strings.TrimPrefix(workingDir, projectRoot+"/"), p.Name)
-		done <- p.Add(ctx, workingDir, repoURL, branch, mod, packagePath)
+		done <- p.AddService(ctx, workingDir, repoURL, branch, service)
 	}()
 	select {
 	case <-ctx.Done():
@@ -143,16 +126,6 @@ func processProjectParams(projectName string, workingDir string) (projectNameRes
 	}
 
 	return filepath.Base(_projectDir), filepath.Dir(_projectDir)
-}
-
-func getgomodProjectRoot(dir string) string {
-	if dir == filepath.Dir(dir) {
-		return dir
-	}
-	if gomodIsNotExistIn(dir) {
-		return getgomodProjectRoot(filepath.Dir(dir))
-	}
-	return dir
 }
 
 func gomodIsNotExistIn(dir string) bool {
