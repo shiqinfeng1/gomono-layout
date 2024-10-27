@@ -1,0 +1,18 @@
+# For details on buf.yaml configuration, visit https://buf.build/docs/configuration/v2/buf-yaml
+version: v2
+lint:
+  use:
+    - STANDARD
+breaking:
+  use:
+    - FILE
+
+modules:
+  - path: api/protos
+  - path: third_party
+
+# deps:
+#   - 'buf.build/googleapis/googleapis'
+# #   - 'buf.build/tx7do/pagination'
+#   - 'buf.build/gnostic/gnostic'
+

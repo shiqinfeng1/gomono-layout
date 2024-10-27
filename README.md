@@ -46,8 +46,7 @@
     $kratos new helloworld -s user  
     ```
 
-    如果项目目录helloworld已经存在，将只创建服务user
-    添加一个新的服务：
+3. 在当前仓库添加一个新的服务
 
     ```bash
     $kratos new helloworld -s order  
@@ -57,17 +56,11 @@
 
 如果你需要重新编译gomono-layout项目，可以执行以下 2 步：
 
-1. 克隆源码
+1. 编译
 
     ```bash
-    $git clone https://github.com/shiqinfeng1/gomono-layout
-    ```
-
-2. 编译
-
-    ```bash
-    $cd $GOPATH/src/github.com/shiqinfeng1/gomono-layout
-    $make
+    cd gomono-layout
+    make
     ```
 
 构建后的二进制文件保存在 `_output/platforms/linux/amd64/` 目录下。

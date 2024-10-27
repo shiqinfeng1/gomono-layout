@@ -1,4 +1,4 @@
-# Copyright 2020 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
+# Copyright 2024 slw <150657601@qq.com>. All rights reserved.
 # Use of this source code is governed by a MIT style
 # license that can be found in the LICENSE file.
 
@@ -23,7 +23,6 @@ include scripts/make-rules/image.mk
 include scripts/make-rules/deploy.mk
 include scripts/make-rules/copyright.mk
 include scripts/make-rules/gen.mk
-include scripts/make-rules/ca.mk
 include scripts/make-rules/release.mk
 include scripts/make-rules/swagger.mk
 include scripts/make-rules/dependencies.mk
