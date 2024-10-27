@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/fatih/color"
 
 	"github.com/shiqinfeng1/gomono-layout/internal/gomonoctl/util/base"
@@ -20,7 +21,7 @@ type Project struct {
 func (p *Project) New(ctx context.Context, dir, layout, branch, serviceName string) error {
 	to := filepath.Join(dir, p.Name)
 
-	fmt.Printf("🚀 Creating service %s, layout repo is %s, please wait a moment.\n\n", p.Name, layout)
+	fmt.Printf("🚀 Creating project %s & Add service %s, layout repo is %s, please wait a moment.\n\n", p.Name, serviceName, layout)
 	repo := base.NewRepo(layout, branch)
 	if err := repo.CopyTo(ctx, to, p.Name, []string{".git", ".github"}); err != nil {
 		return err
@@ -58,7 +59,24 @@ func (p *Project) New(ctx context.Context, dir, layout, branch, serviceName stri
 func (p *Project) AddService(ctx context.Context, dir, layout, branch, serviceName string) error {
 	to := filepath.Join(dir, p.Name)
 
-	fmt.Printf("🚀 Creating service %s, layout repo is %s, please wait a moment.\n\n", p.Name, layout)
+	if _, err := os.Stat(to); !os.IsNotExist(err) {
+		fmt.Printf("🚫 %s already exists\n", p.Name)
+		override := false
+		prompt := &survey.Confirm{
+			Message: "📂 Do you want to override the folder ?",
+			Help:    "Delete the existing folder and create the project.",
+		}
+		e := survey.AskOne(prompt, &override)
+		if e != nil {
+			return e
+		}
+		if !override {
+			return err
+		}
+		os.RemoveAll(to)
+	}
+
+	fmt.Printf("🚀 Add service %s, layout repo is %s, please wait a moment.\n\n", p.Name, layout)
 	repo := base.NewRepo(layout, branch)
 	if err := repo.CopyServiceTo(ctx, to, p.Name, []string{".git", ".github"}); err != nil {
 		return err
