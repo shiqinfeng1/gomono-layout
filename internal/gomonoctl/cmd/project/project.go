@@ -64,7 +64,6 @@ func run(_ *cobra.Command, args []string) {
 		name = args[0]
 	}
 	projectName, workingDir := processProjectParams(name, wd)
-	fmt.Println(projectName, workingDir, name, wd)
 	p := &Project{Name: projectName}
 	if service == "" {
 		prompt := &survey.Input{
@@ -79,7 +78,7 @@ func run(_ *cobra.Command, args []string) {
 	done := make(chan error, 1)
 	go func() {
 		to := filepath.Join(workingDir, p.Name)
-		if _, err := os.Stat(to); !os.IsNotExist(err) {
+		if _, err := os.Stat(to); os.IsNotExist(err) {
 			if err := p.New(ctx, workingDir, repoURL, branch, service); err != nil {
 				done <- err
 				return
