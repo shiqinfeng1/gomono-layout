@@ -15,9 +15,10 @@ var unExpandVarPath = []string{"~", ".", ".."}
 
 // Repo is git repository manager.
 type Repo struct {
-	url    string
-	home   string
-	branch string
+	url            string
+	home           string
+	branch         string
+	serviceTplDirs []string
 }
 
 func repoDir(url string) string {
@@ -39,11 +40,12 @@ func repoDir(url string) string {
 }
 
 // NewRepo new a repository manager.
-func NewRepo(url string, branch string) *Repo {
+func NewRepo(url string, branch string, serviceTplDirs []string) *Repo {
 	return &Repo{
-		url:    url,
-		home:   kratosHomeWithDir("repo/" + repoDir(url)),
-		branch: branch,
+		url:            url,
+		home:           kratosHomeWithDir("repo/" + repoDir(url)),
+		branch:         branch,
+		serviceTplDirs: serviceTplDirs,
 	}
 }
 
@@ -125,12 +127,12 @@ func (r *Repo) CopyServiceTo(ctx context.Context, to string, modPath string, ign
 	if err != nil {
 		return err
 	}
-	//  mod名字替换为modPath
-	if err := copyDir(filepath.Join(r.Path(), "cmd", "server"), filepath.Join(to, "cmd", "server"), []string{mod, modPath}, ignores); err != nil {
-		return err
+	for _, srvtpldir := range r.serviceTplDirs {
+		// mod名字替换为modPath
+		if err := copyDir(filepath.Join(r.Path(), srvtpldir), filepath.Join(to, srvtpldir), []string{mod, modPath}, ignores); err != nil {
+			return err
+		}
 	}
-	if err := copyDir(filepath.Join(r.Path(), "internal", "server"), filepath.Join(to, "internal", "server"), []string{mod, modPath}, ignores); err != nil {
-		return err
-	}
+
 	return nil
 }

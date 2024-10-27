@@ -22,7 +22,7 @@ func (p *Project) New(ctx context.Context, dir, layout, branch, serviceName stri
 	to := filepath.Join(dir, p.Name)
 
 	fmt.Printf("🚀 Creating project %s & Add service %s, layout repo is %s, please wait a moment.\n\n", p.Name, serviceName, layout)
-	repo := base.NewRepo(layout, branch)
+	repo := base.NewRepo(layout, branch, []string{"cmd/server", "internal/server"})
 	if err := repo.CopyTo(ctx, to, p.Name, []string{".git", ".github"}); err != nil {
 		return err
 	}
@@ -59,7 +59,9 @@ func (p *Project) New(ctx context.Context, dir, layout, branch, serviceName stri
 func (p *Project) AddService(ctx context.Context, dir, layout, branch, serviceName string) error {
 	to := filepath.Join(dir, p.Name)
 
-	if _, err := os.Stat(to); !os.IsNotExist(err) {
+	_, err1 := os.Stat(filepath.Join(to, "cmd", serviceName))
+	_, err2 := os.Stat(filepath.Join(to, "internal", serviceName))
+	if !os.IsNotExist(err1) || !os.IsNotExist(err2) {
 		fmt.Printf("🚫 %s already exists\n", p.Name)
 		override := false
 		prompt := &survey.Confirm{
@@ -71,13 +73,14 @@ func (p *Project) AddService(ctx context.Context, dir, layout, branch, serviceNa
 			return e
 		}
 		if !override {
-			return err
+			return nil
 		}
-		os.RemoveAll(to)
+		os.RemoveAll(filepath.Join(to, "cmd", serviceName))
+		os.RemoveAll(filepath.Join(to, "internal", serviceName))
 	}
 
 	fmt.Printf("🚀 Add service %s, layout repo is %s, please wait a moment.\n\n", p.Name, layout)
-	repo := base.NewRepo(layout, branch)
+	repo := base.NewRepo(layout, branch, []string{"cmd/server", "internal/server"})
 	if err := repo.CopyServiceTo(ctx, to, p.Name, []string{".git", ".github"}); err != nil {
 		return err
 	}
