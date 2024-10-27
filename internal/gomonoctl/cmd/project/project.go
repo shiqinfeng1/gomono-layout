@@ -31,11 +31,8 @@ var (
 )
 
 func init() {
-	if repoURL = os.Getenv("GMONO_LAYOUT_REPO"); repoURL == "" {
-		repoURL = "https://github.com/shiqinfeng1/gomono-layout.git"
-	}
+	repoURL = "https://github.com/shiqinfeng1/gomono-layout.git"
 	timeout = "60s"
-	CmdNew.Flags().StringVarP(&repoURL, "repo-url", "r", repoURL, "layout repo")
 	CmdNew.Flags().StringVarP(&branch, "branch", "b", branch, "repo branch")
 	CmdNew.Flags().StringVarP(&timeout, "timeout", "t", timeout, "time out")
 	CmdNew.Flags().StringVarP(&service, "service", "s", service, "service name")
@@ -67,8 +64,8 @@ func run(_ *cobra.Command, args []string) {
 		name = args[0]
 	}
 	projectName, workingDir := processProjectParams(name, wd)
+	fmt.Println(projectName, workingDir, name, wd)
 	p := &Project{Name: projectName}
-	fmt.Fprintln(os.Stderr, "projectName=", projectName, "workingDir", workingDir, "name", name, "wd", wd)
 	if service == "" {
 		prompt := &survey.Input{
 			Message: "What is service name ?",
