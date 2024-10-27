@@ -4,11 +4,11 @@
 // - protoc             (unknown)
 // source: user/v1/user.proto
 
-package userv1
+package v1
 
 import (
 	context "context"
-	v1 "github.com/gomono-layout/api/gen/pagination/v1"
+	v1 "github.com/shiqinfeng1/gomono-layout/api/gen/pagination/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"

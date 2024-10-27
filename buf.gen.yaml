@@ -3,9 +3,12 @@ version: v2
 
 managed:
   enabled: true
-  override:
-    - file_option: go_package_prefix
-      value: github.com/gomono-layout/api/gen
+  disable:
+    - file_option: go_package
+      module: buf.build/googleapis/googleapis
+  # override:
+  #   - file_option: go_package_prefix
+  #     value: github.com/gomono-layout/api/gen
 plugins:
   # 使用go插件生成go代码
   - local: protoc-gen-go
@@ -30,7 +33,6 @@ plugins:
   #   out: api/gen
     
   - remote: buf.build/community/google-gnostic-openapi:v0.7.0
-  # - remote: buf.build/gnostic/gnostic
     out: api/gen
     opt: 
     - naming=json # 命名约定。使用"proto"则直接从proto文件传递名称。默认为：json
