@@ -24,7 +24,6 @@
 
 2. 操作系统：CentOS Linux 8.x (64-bit) / ubuntu Linux 22.04 (64-bit)
 
-
 ### 快速部署
 
 快速部署请参考：[gomono-layout 部署指南](docs/guide/zh-CN/installation/README.md#部署指南)
@@ -35,15 +34,24 @@
 
 1. 安装kratos工具
 
-```bash
-$ go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
-```
+    ```bash
+    go install github.com/shiqinfeng1/gomono-layout/cmd/gomonoctl@latest
+    ```
 
 2. 基于当前模版创建一个项目仓库
 
-```bash
-$ kratos new helloworld -r https://github.com/shiqinfeng1/gomono-layout.git
-```
+    创建项目名称为helloworld，服务名称为user的项目：
+
+    ```bash
+    $kratos new helloworld -s user  
+    ```
+
+    如果项目目录helloworld已经存在，将只创建服务user
+    添加一个新的服务：
+
+    ```bash
+    $kratos new helloworld -s order  
+    ```
 
 ### 构建
 
@@ -51,16 +59,16 @@ $ kratos new helloworld -r https://github.com/shiqinfeng1/gomono-layout.git
 
 1. 克隆源码
 
-```bash
-$ git clone https://github.com/shiqinfeng1/gomono-layout
-```
+    ```bash
+    $git clone https://github.com/shiqinfeng1/gomono-layout
+    ```
 
 2. 编译
 
-```bash
-$ cd $GOPATH/src/github.com/shiqinfeng1/gomono-layout
-$ make
-```
+    ```bash
+    $cd $GOPATH/src/github.com/shiqinfeng1/gomono-layout
+    $make
+    ```
 
 构建后的二进制文件保存在 `_output/platforms/linux/amd64/` 目录下。
 
@@ -78,11 +86,7 @@ You are encouraged to communicate most things via [GitHub issues](https://github
 
 ## 关于作者
 
-
-
 ## 谁在用
-
-
 
 ## 许可证
 

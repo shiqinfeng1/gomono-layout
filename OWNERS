@@ -1,6 +1,9 @@
 # See the OWNERS docs at https://go.k8s.io/owners
 
 reviewers:
-  - shiqinfeng1
+
+- shiqinfeng1
+
 approvers:
-  - shiqinfeng1
+
+- shiqinfeng1
