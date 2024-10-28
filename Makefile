@@ -144,11 +144,6 @@ add-copyright:
 gen:
 	@$(MAKE) gen.run
 
-## ca: Generate CA files for all iam components.
-.PHONY: ca
-ca:
-	@$(MAKE) gen.ca
-
 ## swagger: Generate swagger document.
 .PHONY: swagger
 swagger:
@@ -177,6 +172,7 @@ check-updates:
 .PHONY: tidy
 tidy:
 	@$(GO) mod tidy
+	@$(GO) mod vendor
 
 ## help: Show this help info.
 .PHONY: help

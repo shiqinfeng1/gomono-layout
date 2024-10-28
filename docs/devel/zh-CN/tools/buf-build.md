@@ -54,11 +54,7 @@ chmod +x "${BIN}/buf"
     ```yaml
     deps:
      - 'buf.build/googleapis/googleapis'
-     - 'buf.build/envoyproxy/protoc-gen-validate'
-     - 'buf.build/kratos/apis'
      - 'buf.build/gnostic/gnostic'
-     - 'buf.build/gogo/protobuf'
-     - 'buf.build/tx7do/pagination'
     ```
 
 4. 下载依赖
@@ -66,6 +62,20 @@ chmod +x "${BIN}/buf"
     ```bash
     buf dep update
     ```
+
+5. 安装protoc插件
+
+    见 ：`scripts/make-rules/tools.mk` 中`install.protoc*`的命令
+    同时在`scripts/make-rules/common.mk`中的`CRITICAL_TOOLS`变量中添加安装的工具，有`protoc-gen-go protoc-gen-go-grpc protoc-gen-go-http protoc-gen-go-errors protoc-gen-validate protoc-gen-openapi`
+    在执行`make tools`后，会自动安装这些工具
+
+6. 在`buf.gen.yaml`中配置插件
+
+    插件包括本地已安装的插件和远端插件，根据需要配置
+
+7. 生成go文件
+
+    在根目录下执行`buf genegrate`，在`api/gen`会自动生成go文件
 
 ## 格式化
 

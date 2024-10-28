@@ -6,6 +6,8 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/fatih/color v1.18.0
 	github.com/google/gnostic v0.7.0
+	github.com/marmotedu/errors v1.0.2
+	github.com/novalagung/gubrak v1.0.0
 	github.com/spf13/cobra v1.8.1
 	golang.org/x/mod v0.21.0
 	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d

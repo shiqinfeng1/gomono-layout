@@ -8,7 +8,12 @@
 
 .PHONY: gen.run
 #gen.run: gen.errcode gen.docgo
-gen.run: gen.clean gen.errcode gen.docgo.doc
+gen.run: gen.pb gen.clean gen.errcode gen.docgo.doc
+
+.PHONY: gen.pb
+gen.pb:
+	@echo "===========> Generating pb files *.go from proto file through bu.build"
+	@${ROOT_DIR}/scripts/gendoc.sh
 
 .PHONY: gen.errcode
 gen.errcode: gen.errcode.code gen.errcode.doc

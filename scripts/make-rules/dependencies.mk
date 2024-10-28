@@ -12,6 +12,7 @@ dependencies.run: dependencies.packages dependencies.tools
 .PHONY: dependencies.packages
 dependencies.packages:
 	@$(GO) mod tidy
+	@$(GO) mod vendor
 
 .PHONY: dependencies.tools
 dependencies.tools: dependencies.tools.blocker dependencies.tools.critical

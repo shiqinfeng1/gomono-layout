@@ -9,7 +9,6 @@ breaking:
 
 modules:
   - path: api/protos
-  # - path: third_party
 
 deps:
   - 'buf.build/googleapis/googleapis'
