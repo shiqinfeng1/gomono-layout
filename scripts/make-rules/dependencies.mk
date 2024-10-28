@@ -11,6 +11,8 @@ dependencies.run: dependencies.packages dependencies.tools
 
 .PHONY: dependencies.packages
 dependencies.packages:
+# 在tidy之前先安装goconvey，否则会报错，原因见： https://github.com/smarty/assertions/issues/56
+	@$(GO) get -u github.com/smartystreets/goconvey  
 	@$(GO) mod tidy
 	@$(GO) mod vendor
 

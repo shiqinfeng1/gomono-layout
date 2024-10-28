@@ -171,8 +171,7 @@ check-updates:
 
 .PHONY: tidy
 tidy:
-	@$(GO) mod tidy
-	@$(GO) mod vendor
+	@$(MAKE) dependencies.packages
 
 ## help: Show this help info.
 .PHONY: help

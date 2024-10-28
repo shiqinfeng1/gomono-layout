@@ -12,7 +12,7 @@ gen.run: gen.pb gen.clean gen.errcode gen.docgo.doc
 
 .PHONY: gen.pb
 gen.pb:
-	@echo "===========> Generating pb files *.go from proto file through bu.build"
+	@echo "===========> Generating pb files *.go from proto file through buf.build"
 	@${ROOT_DIR}/scripts/gendoc.sh
 
 .PHONY: gen.errcode
@@ -31,7 +31,7 @@ gen.errcode.doc: tools.verify.codegen
 
 .PHONY: gen.docgo.doc
 gen.docgo.doc:
-	@echo "===========> Generating missing doc.go for go packages"
+	@echo "===========> Generating doc.go for go packages"
 	@${ROOT_DIR}/scripts/gendoc.sh
 
 .PHONY: gen.docgo.check

@@ -1,4 +1,4 @@
-// Copyright 2020 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
+// Copyright 2024 slw <150657601@qq.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -11,4 +11,4 @@
 // StatusInternalServerError          = 500 // RFC 7231, 6.6.1
 
 // Package code defines error codes for iam platform.
-package code // import "github.com/marmotedu/iam/internal/pkg/code"
+package code // import "github.com/shiqinfeng1/gomono-layout/internal/pkg/code"
