@@ -8,6 +8,12 @@
 
 TOOLS ?=$(BLOCKER_TOOLS) $(CRITICAL_TOOLS) $(TRIVIAL_TOOLS)
 
+BIN := /usr/local/bin
+BUF_VERSION := 1.45.0
+
+HOST_ARCH := $(shell uname -m)
+HOST_OS := $(shell uname -s)
+
 .PHONY: tools.install
 tools.install: $(addprefix tools.install., $(TOOLS))
 
@@ -65,6 +71,11 @@ install.mockgen:
 .PHONY: install.gotests
 install.gotests:
 	@$(GO) install github.com/cweill/gotests/gotests@latest
+
+.PHONY: install.buf
+install.buf:
+	@curl -sSL "https://github.com/bufbuild/buf/releases/download/v$(BUF_VERSION)/buf-$(HOST_OS)-$(HOST_ARCH)" --progress-bar -o "$(BIN)/buf"
+	@chmod +x "$(BIN)/buf"
 
 .PHONY: install.protoc-gen-go
 install.protoc-gen-go:

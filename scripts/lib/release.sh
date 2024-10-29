@@ -46,12 +46,12 @@ IAM_BUILD_PULL_LATEST_IMAGES=${IAM_BUILD_PULL_LATEST_IMAGES:-y}
 #   VERSION_PRERELEASE_REV (e.g. '4')
 #   VERSION_BUILD_INFO     (e.g. '.56+abcdef12345678')
 #   VERSION_COMMITS        (e.g. '56')
-function iam::release::parse_and_validate_ci_version() {
+function release::parse_and_validate_ci_version() {
   # Accept things like "v1.2.3-alpha.4.56+abcdef12345678" or "v1.2.3-beta.4"
   local -r version_regex="^v(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)-([a-zA-Z0-9]+)\\.(0|[1-9][0-9]*)(\\.(0|[1-9][0-9]*)\\+[0-9a-f]{7,40})?$"
   local -r version="${1-}"
   [[ "${version}" =~ ${version_regex} ]] || {
-    iam::log::error "Invalid ci version: '${version}', must match regex ${version_regex}"
+    log::error "Invalid ci version: '${version}', must match regex ${version_regex}"
     return 1
   }
 
@@ -76,32 +76,32 @@ function iam::release::parse_and_validate_ci_version() {
 
 # ---------------------------------------------------------------------------
 # Build final release artifacts
-function iam::release::clean_cruft() {
+function release::clean_cruft() {
   # Clean out cruft
   find "${RELEASE_STAGE}" -name '*~' -exec rm {} \;
   find "${RELEASE_STAGE}" -name '#*#' -exec rm {} \;
   find "${RELEASE_STAGE}" -name '.DS*' -exec rm {} \;
 }
 
-function iam::release::package_tarballs() {
+function release::package_tarballs() {
   # Clean out any old releases
   rm -rf "${RELEASE_STAGE}" "${RELEASE_TARS}" "${RELEASE_IMAGES}"
   mkdir -p "${RELEASE_TARS}"
-  iam::release::package_src_tarball &
-  iam::release::package_client_tarballs &
-  iam::release::package_iam_manifests_tarball &
-  iam::release::package_server_tarballs &
-  iam::util::wait-for-jobs || { iam::log::error "previous tarball phase failed"; return 1; }
+  release::package_src_tarball &
+  release::package_client_tarballs &
+  release::package_iam_manifests_tarball &
+  release::package_server_tarballs &
+  util::wait-for-jobs || { log::error "previous tarball phase failed"; return 1; }
 
-  iam::release::package_final_tarball & # _final depends on some of the previous phases
-  iam::util::wait-for-jobs || { iam::log::error "previous tarball phase failed"; return 1; }
+  release::package_final_tarball & # _final depends on some of the previous phases
+  util::wait-for-jobs || { log::error "previous tarball phase failed"; return 1; }
 }
 
 
 # Package the source code we built, for compliance/licensing/audit/yadda.
-function iam::release::package_src_tarball() {
+function release::package_src_tarball() {
   local -r src_tarball="${RELEASE_TARS}/iam-src.tar.gz"
-  iam::log::status "Building tarball: src"
+  log::status "Building tarball: src"
   if [[ "${IAM_GIT_TREE_STATE-}" = 'clean' ]]; then
     git archive -o "${src_tarball}" HEAD
   else
@@ -125,7 +125,7 @@ function iam::release::package_src_tarball() {
 }
 
 # Package up all of the server binaries
-function iam::release::package_server_tarballs() {
+function release::package_server_tarballs() {
   # Find all of the built client binaries
   local long_platforms=("${LOCAL_OUTPUT_BINPATH}"/*/*)
   if [[ -n ${IAM_BUILD_PLATFORMS-} ]]; then
@@ -137,7 +137,7 @@ function iam::release::package_server_tarballs() {
     local platform_tag
     platform=${platform_long##${LOCAL_OUTPUT_BINPATH}/} # Strip LOCAL_OUTPUT_BINPATH
     platform_tag=${platform/\//-} # Replace a "/" for a "-"
-    iam::log::status "Starting tarball: server $platform_tag"
+    log::status "Starting tarball: server $platform_tag"
 
     (
     local release_stage="${RELEASE_STAGE}/server/${platform_tag}/iam"
@@ -152,20 +152,20 @@ function iam::release::package_server_tarballs() {
       cp "${server_bins[@]/#/${LOCAL_OUTPUT_BINPATH}/${platform}/}" \
         "${release_stage}/server/bin/"
 
-      iam::release::clean_cruft
+      release::clean_cruft
 
       local package_name="${RELEASE_TARS}/iam-server-${platform_tag}.tar.gz"
-      iam::release::create_tarball "${package_name}" "${release_stage}/.."
+      release::create_tarball "${package_name}" "${release_stage}/.."
       ) &
     done
 
-    iam::log::status "Waiting on tarballs"
-    iam::util::wait-for-jobs || { iam::log::error "server tarball creation failed"; exit 1; }
+    log::status "Waiting on tarballs"
+    util::wait-for-jobs || { log::error "server tarball creation failed"; exit 1; }
   }
 
 # Package up all of the cross compiled clients. Over time this should grow into
 # a full SDK
-function iam::release::package_client_tarballs() {
+function release::package_client_tarballs() {
   # Find all of the built client binaries
   local long_platforms=("${LOCAL_OUTPUT_BINPATH}"/*/*)
   if [[ -n ${IAM_BUILD_PLATFORMS-} ]]; then
@@ -177,7 +177,7 @@ function iam::release::package_client_tarballs() {
     local platform_tag
     platform=${platform_long##${LOCAL_OUTPUT_BINPATH}/} # Strip LOCAL_OUTPUT_BINPATH
     platform_tag=${platform/\//-} # Replace a "/" for a "-"
-    iam::log::status "Starting tarball: client $platform_tag"
+    log::status "Starting tarball: client $platform_tag"
 
     (
     local release_stage="${RELEASE_STAGE}/client/${platform_tag}/iam"
@@ -192,19 +192,19 @@ function iam::release::package_client_tarballs() {
       cp "${client_bins[@]/#/${LOCAL_OUTPUT_BINPATH}/${platform}/}" \
         "${release_stage}/client/bin/"
 
-      iam::release::clean_cruft
+      release::clean_cruft
 
       local package_name="${RELEASE_TARS}/iam-client-${platform_tag}.tar.gz"
-      iam::release::create_tarball "${package_name}" "${release_stage}/.."
+      release::create_tarball "${package_name}" "${release_stage}/.."
     ) &
   done
 
-  iam::log::status "Waiting on tarballs"
-  iam::util::wait-for-jobs || { iam::log::error "client tarball creation failed"; exit 1; }
+  log::status "Waiting on tarballs"
+  util::wait-for-jobs || { log::error "client tarball creation failed"; exit 1; }
 }
 
 # Package up all of the server binaries in docker images
-function iam::release::build_server_images() {
+function release::build_server_images() {
   # Clean out any old images
   rm -rf "${RELEASE_IMAGES}"
   local platform
@@ -213,7 +213,7 @@ function iam::release::build_server_images() {
     local arch
     platform_tag=${platform/\//-} # Replace a "/" for a "-"
     arch=$(basename "${platform}")
-    iam::log::status "Building images: $platform_tag"
+    log::status "Building images: $platform_tag"
 
     local release_stage
     release_stage="${RELEASE_STAGE}/server/${platform_tag}/iam"
@@ -226,11 +226,11 @@ function iam::release::build_server_images() {
     cp "${IAM_SERVER_IMAGE_BINARIES[@]/#/${LOCAL_OUTPUT_BINPATH}/${platform}/}" \
       "${release_stage}/server/bin/"
 
-    iam::release::create_docker_images_for_server "${release_stage}/server/bin" "${arch}"
+    release::create_docker_images_for_server "${release_stage}/server/bin" "${arch}"
   done
 }
 
-function iam::release::md5() {
+function release::md5() {
   if which md5 >/dev/null 2>&1; then
     md5 -q "$1"
   else
@@ -238,7 +238,7 @@ function iam::release::md5() {
   fi
 }
 
-function iam::release::sha1() {
+function release::sha1() {
   if which sha1sum >/dev/null 2>&1; then
     sha1sum "$1" | awk '{ print $1 }'
   else
@@ -246,12 +246,12 @@ function iam::release::sha1() {
   fi
 }
 
-function iam::release::build_conformance_image() {
+function release::build_conformance_image() {
   local -r arch="$1"
   local -r registry="$2"
   local -r version="$3"
   local -r save_dir="${4-}"
-  iam::log::status "Building conformance image for arch: ${arch}"
+  log::status "Building conformance image for arch: ${arch}"
   ARCH="${arch}" REGISTRY="${registry}" VERSION="${version}" \
     make -C cluster/images/conformance/ build >/dev/null
 
@@ -260,7 +260,7 @@ function iam::release::build_conformance_image() {
   if [[ -n "${save_dir}" ]]; then
     "${DOCKER[@]}" save "${conformance_tag}" > "${save_dir}/conformance-${arch}.tar"
   fi
-  iam::log::status "Deleting conformance image ${conformance_tag}"
+  log::status "Deleting conformance image ${conformance_tag}"
   "${DOCKER[@]}" rmi "${conformance_tag}" &>/dev/null || true
 }
 
@@ -268,7 +268,7 @@ function iam::release::build_conformance_image() {
 # Args:
 #  $1 - binary_dir, the directory to save the tared images to.
 #  $2 - arch, architecture for which we are building docker images.
-function iam::release::create_docker_images_for_server() {
+function release::create_docker_images_for_server() {
   # Create a sub-shell so that we don't pollute the outer environment
   (
     local binary_dir
@@ -277,7 +277,7 @@ function iam::release::create_docker_images_for_server() {
     local images_dir
     binary_dir="$1"
     arch="$2"
-    binaries=$(iam::build::get_docker_wrapped_binaries "${arch}")
+    binaries=$(build::get_docker_wrapped_binaries "${arch}")
     images_dir="${RELEASE_IMAGES}/${arch}"
     mkdir -p "${images_dir}"
 
@@ -288,7 +288,7 @@ function iam::release::create_docker_images_for_server() {
     # Docker tags cannot contain '+'
     local docker_tag="${IAM_GIT_VERSION/+/_}"
     if [[ -z "${docker_tag}" ]]; then
-      iam::log::error "git version information missing; cannot create Docker tag"
+      log::error "git version information missing; cannot create Docker tag"
       return 1
     fi
 
@@ -310,7 +310,7 @@ function iam::release::create_docker_images_for_server() {
       local docker_file_path="${docker_build_path}/Dockerfile"
       local docker_image_tag="${docker_registry}/${binary_name}-${arch}:${docker_tag}"
 
-      iam::log::status "Starting docker build for image: ${binary_name}-${arch}"
+      log::status "Starting docker build for image: ${binary_name}-${arch}"
       (
         rm -rf "${docker_build_path}"
         mkdir -p "${docker_build_path}"
@@ -331,7 +331,7 @@ EOF
         # docker images and tag them appropriately.
         local -r release_docker_image_tag="${IAM_DOCKER_REGISTRY-$docker_registry}/${binary_name}-${arch}:${IAM_DOCKER_IMAGE_TAG-$docker_tag}"
         if [[ "${release_docker_image_tag}" != "${docker_image_tag}" ]]; then
-          iam::log::status "Tagging docker image ${docker_image_tag} as ${release_docker_image_tag}"
+          log::status "Tagging docker image ${docker_image_tag} as ${release_docker_image_tag}"
           "${DOCKER[@]}" rmi "${release_docker_image_tag}" 2>/dev/null || true
           "${DOCKER[@]}" tag "${docker_image_tag}" "${release_docker_image_tag}" 2>/dev/null
         fi
@@ -340,25 +340,25 @@ EOF
         rm -rf "${docker_build_path}"
         ln "${binary_file_path}.tar" "${images_dir}/"
 
-        iam::log::status "Deleting docker image ${docker_image_tag}"
+        log::status "Deleting docker image ${docker_image_tag}"
         "${DOCKER[@]}" rmi "${docker_image_tag}" &>/dev/null || true
       ) &
     done
 
     if [[ "${IAM_BUILD_CONFORMANCE}" =~ [yY] ]]; then
-      iam::release::build_conformance_image "${arch}" "${docker_registry}" \
+      release::build_conformance_image "${arch}" "${docker_registry}" \
         "${docker_tag}" "${images_dir}" &
     fi
 
-    iam::util::wait-for-jobs || { iam::log::error "previous Docker build failed"; return 1; }
-    iam::log::status "Docker builds done"
+    util::wait-for-jobs || { log::error "previous Docker build failed"; return 1; }
+    log::status "Docker builds done"
   )
 
 }
 
 # This will pack iam-system manifests files for distros such as COS.
-function iam::release::package_iam_manifests_tarball() {
-  iam::log::status "Building tarball: manifests"
+function release::package_iam_manifests_tarball() {
+  log::status "Building tarball: manifests"
 
   local src_dir="${IAM_ROOT}/deployments"
 
@@ -374,10 +374,10 @@ function iam::release::package_iam_manifests_tarball() {
   #cp "${src_dir}/iam-watcher.yaml" "${dst_dir}"
   #cp "${IAM_ROOT}/cluster/gce/gci/health-monitor.sh" "${dst_dir}/health-monitor.sh"
 
-  iam::release::clean_cruft
+  release::clean_cruft
 
   local package_name="${RELEASE_TARS}/iam-manifests.tar.gz"
-  iam::release::create_tarball "${package_name}" "${release_stage}/.."
+  release::create_tarball "${package_name}" "${release_stage}/.."
 }
 
 # This is all the platform-independent stuff you need to run/install iam.
@@ -388,8 +388,8 @@ function iam::release::package_iam_manifests_tarball() {
 #   - Tarballs for manifest configs that are ready to be uploaded
 #   - Examples (which may or may not still work)
 #   - The remnants of the docs/ directory
-function iam::release::package_final_tarball() {
-  iam::log::status "Building tarball: final"
+function release::package_final_tarball() {
+  log::status "Building tarball: final"
 
   # This isn't a "full" tarball anymore, but the release lib still expects
   # artifacts under "full/iam/"
@@ -436,17 +436,17 @@ EOF
 
   echo "${IAM_GIT_VERSION}" > "${release_stage}/version"
 
-  iam::release::clean_cruft
+  release::clean_cruft
 
   local package_name="${RELEASE_TARS}/${ARTIFACT}"
-  iam::release::create_tarball "${package_name}" "${release_stage}/.."
+  release::create_tarball "${package_name}" "${release_stage}/.."
 }
 
 # Build a release tarball.  $1 is the output tar name.  $2 is the base directory
 # of the files to be packaged.  This assumes that ${2}/iamis what is
 # being packaged.
-function iam::release::create_tarball() {
-  iam::build::ensure_tar
+function release::create_tarball() {
+  build::ensure_tar
 
   local tarfile=$1
   local stagingdir=$2
@@ -454,7 +454,7 @@ function iam::release::create_tarball() {
   "${TAR}" czf "${tarfile}" -C "${stagingdir}" iam --owner=0 --group=0
 }
 
-function iam::release::install_github_release(){
+function release::install_github_release(){
   GO111MODULE=on go install github.com/github-release/github-release@latest
 }
 
@@ -463,30 +463,30 @@ function iam::release::install_github_release(){
 # - gsemver
 # - git-chglog
 # - coscmd or coscli
-function iam::release::verify_prereqs(){
+function release::verify_prereqs(){
   if [ -z "$(which github-release 2>/dev/null)" ]; then
-    iam::log::info "'github-release' tool not installed, try to install it."
+    log::info "'github-release' tool not installed, try to install it."
 
-    if ! iam::release::install_github_release; then
-      iam::log::error "failed to install 'github-release'"
+    if ! release::install_github_release; then
+      log::error "failed to install 'github-release'"
       return 1
     fi
   fi
 
   if [ -z "$(which git-chglog 2>/dev/null)" ]; then
-    iam::log::info "'git-chglog' tool not installed, try to install it."
+    log::info "'git-chglog' tool not installed, try to install it."
 
     if ! go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest &>/dev/null; then
-      iam::log::error "failed to install 'git-chglog'"
+      log::error "failed to install 'git-chglog'"
       return 1
     fi
   fi
 
   if [ -z "$(which gsemver 2>/dev/null)" ]; then
-    iam::log::info "'gsemver' tool not installed, try to install it."
+    log::info "'gsemver' tool not installed, try to install it."
 
     if ! go install github.com/arnaud-deprez/gsemver@latest &>/dev/null; then
-      iam::log::error "failed to install 'gsemver'"
+      log::error "failed to install 'gsemver'"
       return 1
     fi
   fi
@@ -495,9 +495,9 @@ function iam::release::verify_prereqs(){
 # Create a github release with specified tarballs.
 # NOTICE: Must export 'GITHUB_TOKEN' env in the shell, details:
 # https://github.com/github-release/github-release
-function iam::release::github_release() {
+function release::github_release() {
   # create a github release
-  iam::log::info "create a new github release with tag ${IAM_GIT_VERSION}"
+  log::info "create a new github release with tag ${IAM_GIT_VERSION}"
   github-release release \
     --user ${IAM_GITHUB_ORG} \
     --repo ${IAM_GITHUB_REPO} \
@@ -506,7 +506,7 @@ function iam::release::github_release() {
     --pre-release
 
   # update iam tarballs
-  iam::log::info "upload ${ARTIFACT} to release ${IAM_GIT_VERSION}"
+  log::info "upload ${ARTIFACT} to release ${IAM_GIT_VERSION}"
   github-release upload \
     --user ${IAM_GITHUB_ORG} \
     --repo ${IAM_GITHUB_REPO} \
@@ -514,7 +514,7 @@ function iam::release::github_release() {
     --name ${ARTIFACT} \
     --file ${RELEASE_TARS}/${ARTIFACT}
 
-  iam::log::info "upload iam-src.tar.gz to release ${IAM_GIT_VERSION}"
+  log::info "upload iam-src.tar.gz to release ${IAM_GIT_VERSION}"
   github-release upload \
     --user ${IAM_GITHUB_ORG} \
     --repo ${IAM_GITHUB_REPO} \
@@ -523,8 +523,8 @@ function iam::release::github_release() {
     --file ${RELEASE_TARS}/iam-src.tar.gz
 }
 
-function iam::release::generate_changelog() {
-  iam::log::info "generate CHANGELOG-${IAM_GIT_VERSION#v}.md and commit it"
+function release::generate_changelog() {
+  log::info "generate CHANGELOG-${IAM_GIT_VERSION#v}.md and commit it"
 
   git-chglog ${IAM_GIT_VERSION} > ${IAM_ROOT}/CHANGELOG/CHANGELOG-${IAM_GIT_VERSION#v}.md
 

@@ -10,45 +10,45 @@ IAM_ROOT=$(dirname "${BASH_SOURCE[0]}")/../..
 [[ -z ${COMMON_SOURCED} ]] && source ${IAM_ROOT}/scripts/install/common.sh
 
 # 安装后打印必要的信息
-function iam::man::info() {
+function man::info() {
 cat << EOF
 use: man iam-apiserver to see iam-apiserver help
 EOF
 }
 
 # 安装
-function iam::man::install()
+function man::install()
 {
   pushd ${IAM_ROOT}
 
   # 1. 生成各个组件的 man1 文件
   ${IAM_ROOT}/scripts/update-generated-docs.sh
-  iam::common::sudo "cp docs/man/man1/* /usr/share/man/man1/"
-  iam::man::status || return 1
-  iam::man::info
+  common::sudo "cp docs/man/man1/* /usr/share/man/man1/"
+  man::status || return 1
+  man::info
 
-  iam::log::info "install iam-apiserver successfully"
+  log::info "install iam-apiserver successfully"
   popd
 }
 
 # 卸载
-function iam::man::uninstall()
+function man::uninstall()
 {
   set +o errexit
-  iam::common::sudo "rm -f /usr/share/man/man1/iam-*"
+  common::sudo "rm -f /usr/share/man/man1/iam-*"
   set -o errexit
-  iam::log::info "uninstall iam man pages successfully"
+  log::info "uninstall iam man pages successfully"
 }
 
 # 状态检查
-function iam::man::status()
+function man::status()
 {
   ls /usr/share/man/man1/iam-* &>/dev/null || {
-    iam::log::error "iam man files not exist, maybe not installed properly"
+    log::error "iam man files not exist, maybe not installed properly"
     return 1
   }
 }
 
-if [[ "$*" =~ iam::man:: ]];then
+if [[ "$*" =~ man:: ]];then
   eval $*
 fi

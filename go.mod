@@ -24,7 +24,6 @@ require (
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/gosuri/uitable v0.0.4
 	github.com/marmotedu/component-base v1.6.2
-	github.com/marmotedu/iam v1.7.0
 	github.com/marmotedu/marmotedu-sdk-go v1.6.2
 	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b
 	github.com/sirupsen/logrus v1.9.3
@@ -94,6 +93,8 @@ require (
 	golang.org/x/text v0.19.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240814211410-ddb44dafa142 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gotest.tools/v3 v3.0.3 // indirect
 	moul.io/http2curl v1.0.0 // indirect
 )

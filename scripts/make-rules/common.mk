@@ -79,7 +79,7 @@ COPY_GITHOOK:=$(shell cp -f githooks/* .git/hooks/)
 # Missing CRITICAL_TOOLS can lead to some necessary operations failed. i.e. `make release` failed.
 # TRIVIAL_TOOLS are Optional tools, missing these tool have no affect.
 BLOCKER_TOOLS ?= gsemver golines go-junit-report golangci-lint addlicense goimports codegen
-CRITICAL_TOOLS ?= swagger mockgen gotests git-chglog github-release go-mod-outdated protoc-gen-go protoc-gen-go-grpc protoc-gen-go-http protoc-gen-go-errors protoc-gen-validate protoc-gen-openapi go-gitlint wire # coscmd
+CRITICAL_TOOLS ?= swagger mockgen gotests git-chglog github-release go-mod-outdated protoc-gen-go protoc-gen-go-grpc protoc-gen-go-http protoc-gen-go-errors protoc-gen-validate protoc-gen-openapi go-gitlint wire buf # coscmd
 TRIVIAL_TOOLS ?= depth go-callvis gothanks richgo rts kube-score
 
 COMMA := ,

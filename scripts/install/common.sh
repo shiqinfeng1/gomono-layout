@@ -19,6 +19,6 @@ source "${IAM_ROOT}/scripts/lib/init.sh"
 source "${IAM_ROOT}/scripts/install/environment.sh"
 
 # 不输入密码执行需要 root 权限的命令
-function iam::common::sudo {
+function common::sudo {
   echo ${LINUX_PASSWORD} | sudo -S $1
 }

@@ -17,12 +17,12 @@ source "${IAM_ROOT}/scripts/lib/release.sh"
 
 IAM_RELEASE_RUN_TESTS=${IAM_RELEASE_RUN_TESTS-y}
 
-iam::golang::setup_env
-iam::build::verify_prereqs
-iam::release::verify_prereqs
-#iam::build::build_image
-iam::build::build_command
-iam::release::package_tarballs
-iam::release::updload_tarballs
-iam::release::github_release
-iam::release::generate_changelog
+golang::setup_env
+build::verify_prereqs
+release::verify_prereqs
+#build::build_image
+build::build_command
+release::package_tarballs
+release::updload_tarballs
+release::github_release
+release::generate_changelog

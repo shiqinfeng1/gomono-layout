@@ -24,3 +24,17 @@ go.work.sum
 # env file
 .env
 
+# log
+*.log
+
+# Output of backend and frontend
+/_output
+/_debug
+
+### vscode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace

@@ -1,6 +1,6 @@
 # 错误码
 
-！！IAM 系统错误码列表，由 `codegen -type=int -doc` 命令生成，不要对此文件做任何更改。
+!!gomono 系统错误码列表，由 `codegen -type=int -doc` 命令生成，不要对此文件做任何更改。
 
 ## 功能说明
 
@@ -48,4 +48,3 @@ IAM 系统支持的错误码列表如下：
 | ErrInvalidYaml | 100306 | 500 | Data is not valid Yaml |
 | ErrEncodingYaml | 100307 | 500 | Yaml data could not be encoded |
 | ErrDecodingYaml | 100308 | 500 | Yaml data could not be decoded |
-

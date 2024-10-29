@@ -22,7 +22,7 @@ COLOR_BBLUE='\033[44m';COLOR_BMAGENTA='\033[45m';
 COLOR_BCYAN='\033[46m';COLOR_BWHITE='\033[47m';
 
 # Print colors you can use
-iam::color::print_color()
+color::print_color()
 {
   echo
   echo -e ${bmagenta}--back-color:${normal}

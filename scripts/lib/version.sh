@@ -21,9 +21,9 @@
 #
 # If IAM_GIT_VERSION_FILE, this function will load from that file instead of
 # querying git.
-iam::version::get_version_vars() {
+version::get_version_vars() {
   if [[ -n ${IAM_GIT_VERSION_FILE-} ]]; then
-    iam::version::load_version_vars "${IAM_GIT_VERSION_FILE}"
+    version::load_version_vars "${IAM_GIT_VERSION_FILE}"
     return
   fi
 
@@ -109,10 +109,10 @@ iam::version::get_version_vars() {
 }
 
 # Saves the environment flags to $1
-iam::version::save_version_vars() {
+version::save_version_vars() {
   local version_file=${1-}
   [[ -n ${version_file} ]] || {
-    echo "!!! Internal error.  No file specified in iam::version::save_version_vars"
+    echo "!!! Internal error.  No file specified in version::save_version_vars"
     return 1
   }
 
@@ -126,10 +126,10 @@ EOF
 }
 
 # Loads up the version variables from file $1
-iam::version::load_version_vars() {
+version::load_version_vars() {
   local version_file=${1-}
   [[ -n ${version_file} ]] || {
-    echo "!!! Internal error.  No file specified in iam::version::load_version_vars"
+    echo "!!! Internal error.  No file specified in version::load_version_vars"
     return 1
   }
 

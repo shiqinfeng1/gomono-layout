@@ -9,7 +9,7 @@ IAM_VERBOSE="${IAM_VERBOSE:-5}"
 
 # Handler for when we exit automatically on an error.
 # Borrowed from https://gist.github.com/ahendrix/7030300
-iam::log::errexit() {
+log::errexit() {
   local err="${PIPESTATUS[*]}"
 
   # If the shell we are in doesn't have errexit set (common in subshells) then
@@ -21,19 +21,19 @@ iam::log::errexit() {
   # Print out the stack trace described by $function_stack
   if [ ${#FUNCNAME[@]} -gt 2 ]
   then
-    iam::log::error "Call tree:"
+    log::error "Call tree:"
     for ((i=1;i<${#FUNCNAME[@]}-1;i++))
     do
-      iam::log::error " ${i}: ${BASH_SOURCE[${i}+1]}:${BASH_LINENO[${i}]} ${FUNCNAME[${i}]}(...)"
+      log::error " ${i}: ${BASH_SOURCE[${i}+1]}:${BASH_LINENO[${i}]} ${FUNCNAME[${i}]}(...)"
     done
   fi
-  iam::log::error_exit "Error in ${BASH_SOURCE[1]}:${BASH_LINENO[0]}. '${BASH_COMMAND}' exited with status ${err}" "${1:-1}" 1
+  log::error_exit "Error in ${BASH_SOURCE[1]}:${BASH_LINENO[0]}. '${BASH_COMMAND}' exited with status ${err}" "${1:-1}" 1
 }
 
-iam::log::install_errexit() {
+log::install_errexit() {
   # trap ERR to provide an error handler whenever a command exits nonzero  this
   # is a more verbose version of set -o errexit
-  trap 'iam::log::errexit' ERR
+  trap 'log::errexit' ERR
 
   # setting errtrace allows our ERR trap handler to be propagated to functions,
   # expansions and subshells
@@ -44,7 +44,7 @@ iam::log::install_errexit() {
 #
 # Args:
 #   $1 The number of stack frames to skip when printing.
-iam::log::stack() {
+log::stack() {
   local stack_skip=${1:-0}
   stack_skip=$((stack_skip + 1))
   if [[ ${#FUNCNAME[@]} -gt ${stack_skip} ]]; then
@@ -66,7 +66,7 @@ iam::log::stack() {
 #   $1 Message to log with the error
 #   $2 The error code to return
 #   $3 The number of stack frames to skip when printing.
-iam::log::error_exit() {
+log::error_exit() {
   local message="${1:-}"
   local code="${2:-1}"
   local stack_skip="${3:-0}"
@@ -80,7 +80,7 @@ iam::log::error_exit() {
       echo "  ${1}" >&2
     }
 
-    iam::log::stack ${stack_skip}
+    log::stack ${stack_skip}
 
     echo "Exiting with status ${code}" >&2
   fi
@@ -89,7 +89,7 @@ iam::log::error_exit() {
 }
 
 # Log an error but keep going.  Don't dump the stack or exit.
-iam::log::error() {
+log::error() {
   timestamp=$(date +"[%m%d %H:%M:%S]")
   echo "!!! ${timestamp} ${1-}" >&2
   shift
@@ -99,7 +99,7 @@ iam::log::error() {
 }
 
 # Print an usage message to stderr.  The arguments are printed directly.
-iam::log::usage() {
+log::usage() {
   echo >&2
   local message
   for message; do
@@ -108,17 +108,17 @@ iam::log::usage() {
   echo >&2
 }
 
-iam::log::usage_from_stdin() {
+log::usage_from_stdin() {
   local messages=()
   while read -r line; do
     messages+=("${line}")
   done
 
-  iam::log::usage "${messages[@]}"
+  log::usage "${messages[@]}"
 }
 
 # Print out some info that isn't a top level status line
-iam::log::info() {
+log::info() {
   local V="${V:-0}"
   if [[ ${IAM_VERBOSE} < ${V} ]]; then
     return
@@ -129,24 +129,24 @@ iam::log::info() {
   done
 }
 
-# Just like iam::log::info, but no \n, so you can make a progress bar
-iam::log::progress() {
+# Just like log::info, but no \n, so you can make a progress bar
+log::progress() {
   for message; do
     echo -e -n "${message}"
   done
 }
 
-iam::log::info_from_stdin() {
+log::info_from_stdin() {
   local messages=()
   while read -r line; do
     messages+=("${line}")
   done
 
-  iam::log::info "${messages[@]}"
+  log::info "${messages[@]}"
 }
 
 # Print a status line.  Formatted to show up in a stream of output.
-iam::log::status() {
+log::status() {
   local V="${V:-0}"
   if [[ ${IAM_VERBOSE} < ${V} ]]; then
     return

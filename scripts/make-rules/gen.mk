@@ -11,9 +11,9 @@
 gen.run: gen.pb gen.clean gen.errcode gen.docgo.doc
 
 .PHONY: gen.pb
-gen.pb:
+gen.pb: tools.verify.buf
 	@echo "===========> Generating pb files *.go from proto file through buf.build"
-	@${ROOT_DIR}/scripts/gendoc.sh
+	@${ROOT_DIR}/scripts/buf.sh
 
 .PHONY: gen.errcode
 gen.errcode: gen.errcode.code gen.errcode.doc
