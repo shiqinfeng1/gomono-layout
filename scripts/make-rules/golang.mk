@@ -17,10 +17,18 @@ ifneq ($(DLV),)
 endif
 GO_BUILD_FLAGS += -ldflags "$(GO_LDFLAGS)"
 
+GOOS := $(shell go env GOOS)
 ifeq ($(GOOS),windows)
 	GO_OUT_EXT := .exe
 endif
 
+ifeq ($(GOOS),linux)
+	SED := sed -i
+endif
+ifeq ($(GOOS),darwin)
+	SED := sed -i ''
+endif
+ 
 ifeq ($(ROOT_PACKAGE),)
 	$(error the variable ROOT_PACKAGE must be set prior to including golang.mk)
 endif
@@ -79,11 +87,11 @@ go.test: tools.verify.go-junit-report
 		egrep -v $(subst $(SPACE),'|',$(sort $(EXCLUDE_TESTS)))` 2>&1 | \
 		tee >(go-junit-report --set-exit-code >$(OUTPUT_DIR)/report.xml)
 # remove no need files from test coverage
-	@sed -i '' '/api/d' $(OUTPUT_DIR)/coverage.out 
-	@sed -i '' '/mock/d' $(OUTPUT_DIR)/coverage.out 
-	@sed -i '' '/tools/d' $(OUTPUT_DIR)/coverage.out 
-	@sed -i '' '/pkg/d' $(OUTPUT_DIR)/coverage.out 
-	@sed -i '' '/cmd/d' $(OUTPUT_DIR)/coverage.out 
+	@$(SED) '/api/d' $(OUTPUT_DIR)/coverage.out 
+	@$(SED) '/mock/d' $(OUTPUT_DIR)/coverage.out 
+	@$(SED) '/tools/d' $(OUTPUT_DIR)/coverage.out 
+	@$(SED) '/pkg/d' $(OUTPUT_DIR)/coverage.out 
+	@$(SED) '/cmd/d' $(OUTPUT_DIR)/coverage.out 
 	@$(GO) tool cover -html=$(OUTPUT_DIR)/coverage.out -o $(OUTPUT_DIR)/coverage.html
 
 .PHONY: go.test.cover

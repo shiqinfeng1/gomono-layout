@@ -43,24 +43,31 @@
     创建项目名称为helloworld，服务名称为user的项目：
 
     ```bash
-    $kratos new helloworld -s user  
+    $kratos new helloworld --service user  
     ```
 
 3. 在当前仓库添加一个新的服务
 
     ```bash
-    $kratos new helloworld -s order  
+    $kratos new helloworld --service order  
     ```
 
 ### 构建
 
 如果你需要重新编译gomono-layout项目，可以执行以下 2 步：
 
+1. 首次使用时，先安装工具
+    
+    ```bash
+    cd gomono-layout
+    make tools
+    ```
+    
 1. 编译
 
     ```bash
     cd gomono-layout
-    make
+    make all
     ```
 
 构建后的二进制文件保存在 `_output/platforms/linux/amd64/` 目录下。

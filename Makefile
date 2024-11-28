@@ -11,7 +11,7 @@ all: tidy gen add-copyright format lint cover build
 # ==============================================================================
 # Build options
 
-ROOT_PACKAGE=github.com/marmotedu/iam
+ROOT_PACKAGE=github.com/shiqinfeng1/gomono-layout
 VERSION_PACKAGE=github.com/marmotedu/component-base/pkg/version
 
 # ==============================================================================

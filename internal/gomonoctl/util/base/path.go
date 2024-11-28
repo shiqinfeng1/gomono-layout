@@ -1,3 +1,7 @@
+// Copyright 2024 Shiqinfeng &lt;150627601@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
 package base
 
 import (
@@ -103,7 +107,12 @@ func hasSets(name string, sets []string) bool {
 func Tree(path string, dir string) {
 	_ = filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 		if err == nil && info != nil && !info.IsDir() {
-			fmt.Printf("%s %s (%v bytes)\n", color.GreenString("CREATED"), strings.Replace(path, dir+"/", "", -1), info.Size())
+			fmt.Printf(
+				"%s %s (%v bytes)\n",
+				color.GreenString("CREATED"),
+				strings.Replace(path, dir+"/", "", -1),
+				info.Size(),
+			)
 		}
 		return nil
 	})

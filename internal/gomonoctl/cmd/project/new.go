@@ -1,3 +1,7 @@
+// Copyright 2024 Shiqinfeng &lt;150627601@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
 package project
 
 import (
@@ -21,7 +25,12 @@ type Project struct {
 func (p *Project) New(ctx context.Context, dir, layout, branch, serviceName string) error {
 	to := filepath.Join(dir, p.Name)
 
-	fmt.Printf("🚀 Creating project %s & Add service %s, layout repo is %s, please wait a moment.\n\n", p.Name, serviceName, layout)
+	fmt.Printf(
+		"🚀 Creating project %s & Add service %s, layout repo is %s, please wait a moment.\n\n",
+		p.Name,
+		serviceName,
+		layout,
+	)
 	repo := base.NewRepo(layout, branch, []string{"cmd/server", "internal/server"})
 	if err := repo.CopyTo(ctx, to, p.Name, []string{".git", ".github"}); err != nil {
 		return err

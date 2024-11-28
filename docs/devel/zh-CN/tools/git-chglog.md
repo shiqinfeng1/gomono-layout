@@ -18,7 +18,7 @@ $ git-chglog --init
 
 选项：
 
-- What is the URL of your repository?: https://github.com/marmotedu/iam
+- What is the URL of your repository?: https://github.com/shiqinfeng1/gomono-layout
 - What is your favorite style?: github
 - Choose the format of your favorite commit message: <type>(<scope>): <subject> -- feat(core): Add new feature
 - What is your favorite template style?: standard

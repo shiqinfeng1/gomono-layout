@@ -33,6 +33,8 @@ run:
     - util
     - .*~
     - api/swagger/docs
+    - api/gen
+    - api/protos
 
   # default is true. Enables skipping of directories:
   #   vendor$, third_party$, testdata$, examples$, Godeps$, builtin$
@@ -716,22 +718,29 @@ linters:
   # enable-all: true
   disable-all: true
   enable:
-    - typecheck
     - asciicheck
+    - bidichk
     - bodyclose
+    - containedctx
+    - contextcheck
     - cyclop
     - deadcode
+    - decorder
     - depguard
     - dogsled
     - dupl
     - durationcheck
     - errcheck
+    - errchkjson
+    - errname
     - errorlint
+    - execinquery
     - exhaustive
+    - exhaustruct
     - exportloopref
     - forbidigo
     - funlen
-      #- gci
+    - gci
     - gochecknoinits
     - gocognit
     - goconst
@@ -743,23 +752,28 @@ linters:
     - goheader
     - goimports
     - gomoddirectives
-    - gomodguard
     - goprintffuncname
     - gosec
     - gosimple
     - govet
+    - grouper
     - ifshort
     - importas
     - ineffassign
+    - ireturn
     - lll
+    - maintidx
     - makezero
     - misspell
     - nakedret
     - nestif
     - nilerr
+    - nilnil
     - nlreturn
     - noctx
     - nolintlint
+    - nonamedreturns
+    - nosprintfhostport
     - paralleltest
     - prealloc
     - predeclared
@@ -770,33 +784,17 @@ linters:
     - staticcheck
     - structcheck
     - stylecheck
+    - tenv
     - thelper
     - tparallel
+    - typecheck
     - unconvert
     - unparam
     - unused
     - varcheck
+    - varnamelen
     - wastedassign
     - whitespace
-    - bidichk
-    - wastedassign
-    - golint
-    - execinquery
-    - nosprintfhostport
-    - grouper
-    - decorder
-    - errchkjson
-    - maintidx
-      #- containedctx
-      #- tagliatelle
-      #- nonamedreturns
-      #- nilnil
-      #- tenv
-      #- varnamelen
-      #- contextcheck
-      #- errname
-      #- ForceTypeAssert
-      #- nilassign
   fast: false
 
 issues:
