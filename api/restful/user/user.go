@@ -1,0 +1,16 @@
+// =================================================================================
+// Code generated and maintained by GoFrame CLI tool. DO NOT EDIT.
+// =================================================================================
+
+package user
+
+import (
+	"context"
+
+	"github.com/shiqinfeng1/gomono-layout/api/restful/user/v1"
+)
+
+type IUserV1 interface {
+	IsAutoUpdate(ctx context.Context, req *v1.IsAutoUpdateReq) (res *v1.IsAutoUpdateRes, err error)
+	GetConfig(ctx context.Context, req *v1.GetConfigReq) (res *v1.GetConfigRes, err error)
+}
