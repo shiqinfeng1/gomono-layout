@@ -1,238 +1,31 @@
-// Copyright 2024 Shiqinfeng &lt;150627601@qq.com>. All rights reserved.
+// Copyright 2024 slw 150627601@qq.com . All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
 syntax = "proto3";
 
-package user.v1;
+package user;
 
-import "gnostic/openapi/v3/annotations.proto";
-import "google/api/field_behavior.proto";
+option go_package = "github.com/shiqinfeng1/gomono-layout/api/gen/trainer/v1;v1";
+
+import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
-import "google/protobuf/field_mask.proto";
-import "google/protobuf/timestamp.proto";
-import "pagination/v1/pagination.proto";
 
-option go_package = "github.com/shiqinfeng1/gomono-layout/api/gen/user/v1;v1";
-
-// 用户服务
 service UserService {
-  // 查询用户列表
-  rpc ListUser(ListUserRequest) returns (ListUserResponse) {}
-
-  // 查询用户详情
-  rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
-
-  // 创建用户
-  rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty) {}
-
-  // 更新用户
-  rpc UpdateUser(UpdateUserRequest) returns (google.protobuf.Empty) {}
-
-  // 删除用户
-  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty) {}
-
-  // 查询用户详情
-  rpc GetUserByUserName(GetUserByUserNameRequest) returns (GetUserByUserNameResponse) {}
-
-  // 验证密码
-  rpc VerifyPassword(VerifyPasswordRequest) returns (VerifyPasswordResponse) {}
-
-  // 用户是否存在
-  rpc UserExists(UserExistsRequest) returns (UserExistsResponse) {}
+  rpc GetTrainingBalance(GetTrainingBalanceRequest) returns (GetTrainingBalanceResponse) {
+  }
+  rpc UpdateTrainingBalance(UpdateTrainingBalanceRequest) returns (google.protobuf.Empty) {}
 }
 
-// 验证密码结果码
-enum VerifyPasswordResult {
-  VERIFY_PASSWORD_RESULT_UNSPECIFIED = 0;
-  VERIFY_PASSWORD_RESULT_SUCCESS = 1; // 验证成功
-  VERIFY_PASSWORD_RESULT_ACCOUNT_NOT_EXISTS = 2; // 账号不存在
-  VERIFY_PASSWORD_RESULT_WRONG_PASSWORD = 3; // 密码错误
-  VERIFY_PASSWORD_RESULT_FREEZE = 4; // 已冻结
-  VERIFY_PASSWORD_RESULT_DELETED = 5; // 已删除
+message GetTrainingBalanceRequest {
+  string user_id = 1;
 }
 
-// 用户权限
-enum UserAuthority {
-  USER_AUTHORITY_SYS_UNSPECIFIED = 0; // 系统超级用户
-  USER_AUTHORITY_SYS_ADMIN = 1; // 系统超级用户
-  USER_AUTHORITY_CUSTOMER_USER = 2; // 普通用户
-  USER_AUTHORITY_GUEST_USER = 3; // 游客
-  USER_AUTHORITY_REFRESH_TOKEN = 4; // 刷新令牌
+message GetTrainingBalanceResponse {
+  int64 amount = 1;
 }
 
-message ListUserRequest {
-  pagination.v1.PagingRequest page = 1;
-}
-
-// 用户
-message User {
-  uint32 id = 1; // 用户ID
-  optional uint32 role_id = 2 [
-    json_name = "roleId",
-    (gnostic.openapi.v3.property) = {description: "角色ID"}
-  ]; // 角色ID
-  optional uint32 work_id = 3 [
-    json_name = "workId",
-    (gnostic.openapi.v3.property) = {description: "工号"}
-  ]; // 工号
-  optional uint32 org_id = 4 [
-    json_name = "orgId",
-    (gnostic.openapi.v3.property) = {description: "部门ID"}
-  ]; // 部门ID
-  optional uint32 position_id = 5 [
-    json_name = "positionId",
-    (gnostic.openapi.v3.property) = {description: "岗位ID"}
-  ]; // 岗位ID
-  optional uint32 creator_id = 6 [
-    json_name = "creatorId",
-    (gnostic.openapi.v3.property) = {description: "创建者ID"}
-  ]; // 创建者ID
-
-  optional string user_name = 10 [
-    json_name = "userName",
-    (gnostic.openapi.v3.property) = {description: "登录名"}
-  ]; // 登录名
-  optional string nick_name = 11 [
-    json_name = "nickName",
-    (gnostic.openapi.v3.property) = {description: "昵称"}
-  ]; // 昵称
-  optional string real_name = 12 [
-    json_name = "realName",
-    (gnostic.openapi.v3.property) = {description: "真实姓名"}
-  ]; // 真实姓名
-  optional string avatar = 13 [
-    json_name = "avatar",
-    (gnostic.openapi.v3.property) = {description: "头像"}
-  ]; // 头像
-  optional string email = 14 [
-    json_name = "email",
-    (gnostic.openapi.v3.property) = {description: "邮箱"}
-  ]; // 邮箱
-  optional string phone = 15 [
-    json_name = "phone",
-    (gnostic.openapi.v3.property) = {description: "手机号"}
-  ]; // 手机号
-  optional string gender = 16 [
-    json_name = "gender",
-    (gnostic.openapi.v3.property) = {description: "性别"}
-  ]; // 性别
-  optional string address = 17 [
-    json_name = "address",
-    (gnostic.openapi.v3.property) = {description: "住址"}
-  ]; // 住址
-  optional string description = 18 [
-    json_name = "description",
-    (gnostic.openapi.v3.property) = {description: "个人描述"}
-  ]; // 个人描述
-
-  optional int64 last_login_time = 20 [
-    json_name = "lastLoginTime",
-    (gnostic.openapi.v3.property) = {description: "最后登录时间"}
-  ]; // 最后登录时间
-  optional string last_login_ip = 21 [
-    json_name = "lastLoginIp",
-    (gnostic.openapi.v3.property) = {description: "最后登录IP"}
-  ]; // 最后登录IP
-  optional string status = 22 [(gnostic.openapi.v3.property) = {
-    description: "用户状态"
-    default: {string: "ON"}
-    enum: [
-      {yaml: "ON"},
-      {yaml: "OFF"}]
-  }]; // 用户状态
-  optional UserAuthority authority = 23 [(gnostic.openapi.v3.property) = {
-    description: "权限"
-    default: {string: "CUSTOMER_USER"}
-  }]; // 权限
-
-  optional google.protobuf.Timestamp create_time = 30 [json_name = "createTime"];
-  optional google.protobuf.Timestamp update_time = 31 [json_name = "updateTime"];
-  optional google.protobuf.Timestamp delete_time = 32 [json_name = "deleteTime"];
-}
-
-// 获取用户列表 - 答复
-message ListUserResponse {
-  repeated User items = 1;
-  int32 total = 2;
-}
-
-// 获取用户数据 - 请求
-message GetUserRequest {
-  uint32 id = 1;
-}
-message GetUserResponse {
-  User user = 1;
-}
-message GetUserByUserNameRequest {
-  string user_name = 1;
-}
-message GetUserByUserNameResponse {
-  User user = 1;
-}
-
-// 创建用户 - 请求
-message CreateUserRequest {
-  uint32 operator_id = 1;
-  User user = 2;
-  string password = 3;
-}
-
-// 更新用户 - 请求
-message UpdateUserRequest {
-  uint32 operator_id = 1 [
-    (gnostic.openapi.v3.property) = {
-      description: "操作用户ID"
-      read_only: true
-    },
-    json_name = "operatorId"
-  ];
-
-  User user = 2 [
-    (google.api.field_behavior) = REQUIRED,
-    (gnostic.openapi.v3.property) = {description: "用户的数据"},
-    json_name = "user"
-  ];
-
-  string password = 3;
-
-  google.protobuf.FieldMask update_mask = 4 [
-    (gnostic.openapi.v3.property) = {
-      description: "要更新的字段列表"
-      example: {yaml: "id,realName,userName"}
-    },
-    json_name = "updateMask"
-  ];
-
-  bool allow_missing = 5 [
-    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增，并且在这种情况下`updateMask`字段将会被忽略。"},
-    json_name = "allowMissing"
-  ];
-}
-
-// 删除用户 - 请求
-message DeleteUserRequest {
-  uint32 id = 1;
-  uint32 operator_id = 2;
-}
-
-// 验证密码 - 请求
-message VerifyPasswordRequest {
-  string user_name = 1; // 用户名
-  string password = 2; // 密码
-}
-
-// 验证密码 - 答复
-message VerifyPasswordResponse {
-  VerifyPasswordResult result = 1;
-}
-
-// 用户是否存在 - 请求
-message UserExistsRequest {
-  string user_name = 1;
-}
-
-// 用户是否存在 - 答复
-message UserExistsResponse {
-  bool exist = 1;
+message UpdateTrainingBalanceRequest {
+  string user_id = 1;
+  int64 amount_change = 2;
 }
