@@ -64,7 +64,13 @@ endif
 
 # Linux command settings
 FIND := find . ! -path './third_party/*' ! -path './vendor/*'
-XARGS := xargs --no-run-if-empty
+ifeq ($(GOOS),linux)
+	XARGS := xargs --no-run-if-empty
+endif
+ifeq ($(GOOS),darwin)
+	XARGS := xargs
+endif
+
 
 # Makefile settings
 ifndef V
@@ -72,7 +78,7 @@ MAKEFLAGS += --no-print-directory
 endif
 
 # Copy githook scripts when execute makefile
-COPY_GITHOOK:=$(shell cp -f githooks/* .git/hooks/)
+COPY_GITHOOK:=$(shell cp -f scripts/githooks/* .git/hooks/)
 
 # Specify tools severity, include: BLOCKER_TOOLS, CRITICAL_TOOLS, TRIVIAL_TOOLS.
 # Missing BLOCKER_TOOLS can cause the CI flow execution failed, i.e. `make all` failed.

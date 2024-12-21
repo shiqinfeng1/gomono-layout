@@ -21,6 +21,9 @@ import (
 	"github.com/shiqinfeng1/gomono-layout/pkg/log"
 )
 
+// ErrKeyNotFound is a standard error for when a key is not found in the storage engine.
+var ErrKeyNotFound = errors.New("key not found")
+
 // Config defines options for redis cluster.
 type Config struct {
 	Host                  string
@@ -42,9 +45,8 @@ type Config struct {
 var ErrRedisIsDown = errors.New("storage: Redis is either down or ws not configured")
 
 var (
-	singlePool      atomic.Value
-	singleCachePool atomic.Value
-	redisUp         atomic.Value
+	singlePool atomic.Value
+	redisUp    atomic.Value
 )
 
 var disableRedis atomic.Value
@@ -78,15 +80,7 @@ func Connected() bool {
 	return false
 }
 
-func singleton(cache bool) redis.UniversalClient {
-	if cache {
-		v := singleCachePool.Load()
-		if v != nil {
-			return v.(redis.UniversalClient)
-		}
-
-		return nil
-	}
+func singleton() redis.UniversalClient {
 	if v := singlePool.Load(); v != nil {
 		return v.(redis.UniversalClient)
 	}
@@ -95,15 +89,10 @@ func singleton(cache bool) redis.UniversalClient {
 }
 
 // nolint: unparam
-func connectSingleton(cache bool, config *Config) bool {
-	if singleton(cache) == nil {
+func connectSingleton(config *Config) bool {
+	if singleton() == nil {
 		log.Debug("Connecting to redis cluster")
-		if cache {
-			singleCachePool.Store(NewRedisClusterPool(cache, config))
-
-			return true
-		}
-		singlePool.Store(NewRedisClusterPool(cache, config))
+		singlePool.Store(NewRedisClusterPool(config))
 
 		return true
 	}
@@ -115,11 +104,10 @@ func connectSingleton(cache bool, config *Config) bool {
 type RedisCluster struct {
 	KeyPrefix string
 	HashKeys  bool
-	IsCache   bool
 }
 
-func clusterConnectionIsOpen(cluster RedisCluster) bool {
-	c := singleton(cluster.IsCache)
+func clusterConnectionIsOpen() bool {
+	c := singleton()
 	testKey := "redis-test-" + uuid.Must(uuid.NewV4()).String()
 	if err := c.Set(testKey, "test", time.Second).Err(); err != nil {
 		log.Warnf("Error trying to set test key: %s", err.Error())
@@ -140,15 +128,15 @@ func ConnectToRedis(ctx context.Context, config *Config) {
 	tick := time.NewTicker(time.Second)
 	defer tick.Stop()
 	c := []RedisCluster{
-		{}, {IsCache: true},
+		{},
 	}
 	var ok bool
-	for _, v := range c {
-		if !connectSingleton(v.IsCache, config) {
+	for range c {
+		if !connectSingleton(config) {
 			break
 		}
 
-		if !clusterConnectionIsOpen(v) {
+		if !clusterConnectionIsOpen() {
 			redisUp.Store(false)
 
 			break
@@ -165,14 +153,14 @@ again:
 			if !shouldConnect() {
 				continue
 			}
-			for _, v := range c {
-				if !connectSingleton(v.IsCache, config) {
+			for range c {
+				if !connectSingleton(config) {
 					redisUp.Store(false)
 
 					goto again
 				}
 
-				if !clusterConnectionIsOpen(v) {
+				if !clusterConnectionIsOpen() {
 					redisUp.Store(false)
 
 					goto again
@@ -184,7 +172,7 @@ again:
 }
 
 // NewRedisClusterPool create a redis cluster pool.
-func NewRedisClusterPool(isCache bool, config *Config) redis.UniversalClient {
+func NewRedisClusterPool(config *Config) redis.UniversalClient {
 	// redisSingletonMu is locked and we know the singleton is nil
 	log.Debug("Creating new Redis connection pool")
 
@@ -359,7 +347,7 @@ func (r *RedisCluster) Connect() bool {
 }
 
 func (r *RedisCluster) singleton() redis.UniversalClient {
-	return singleton(r.IsCache)
+	return singleton()
 }
 
 func (r *RedisCluster) hashKey(in string) string {

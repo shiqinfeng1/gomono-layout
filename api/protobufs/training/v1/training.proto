@@ -1,0 +1,65 @@
+// Copyright 2024 slw 150627601@qq.com . All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package training;
+
+option go_package = "github.com/shiqinfeng1/gomono-layout/api/gen/training/v1;v1";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service TrainingService {
+  rpc GetTraining(google.protobuf.Empty) returns (GetTrainingResponse) {}
+  rpc CreateTraining(CreateTrainingRequest) returns (CreateTrainingResponse) {}
+  rpc CancelTraining(CancelTrainingRequest) returns (google.protobuf.Empty) {}
+  rpc RescheduleTraining(RescheduleTrainingRequest) returns (google.protobuf.Empty) {}
+  rpc ApproveRescheduleTraining(ApproveRescheduleTrainingRequest) returns (google.protobuf.Empty) {}
+  rpc RequestRescheduleTraining(RequestRescheduleTrainingRequest) returns (google.protobuf.Empty) {}
+  rpc RejectRescheduleTraining(RejectRescheduleTrainingRequest) returns (google.protobuf.Empty) {}
+}
+
+message GetTrainingResponse {
+  message Training  {
+    bool can_be_cancelled = 1;
+    string move_proposed_by = 2;
+    bool move_requires_accept = 3;
+    string notes = 4;
+    google.protobuf.Timestamp proposed_time = 5; 
+    google.protobuf.Timestamp time = 6;      
+    string user = 7;
+    string user_uuid = 8;      
+    string uuid = 9;          
+}
+	repeated  Training  training = 1;
+}
+
+message CreateTrainingRequest {
+    string notes = 1;
+	google.protobuf.Timestamp time = 2;
+}
+message CreateTrainingResponse {
+    string training_uuid = 1;
+}
+
+message CancelTrainingRequest {
+    string training_uuid = 1;
+}
+message RescheduleTrainingRequest {
+    string training_uuid = 1;
+    string notes = 2;
+	google.protobuf.Timestamp time = 3;
+}
+message RequestRescheduleTrainingRequest {
+    string training_uuid = 1;
+    string notes = 2;
+	google.protobuf.Timestamp time = 3;
+}
+message ApproveRescheduleTrainingRequest {
+    string training_uuid = 1;
+}
+message RejectRescheduleTrainingRequest {
+    string training_uuid = 1;
+}

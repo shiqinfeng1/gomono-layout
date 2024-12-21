@@ -20,7 +20,13 @@ GO_BUILD_FLAGS += -ldflags "$(GO_LDFLAGS)"
 ifeq ($(GOOS),windows)
 	GO_OUT_EXT := .exe
 endif
-
+ifeq ($(GOOS),linux)
+	SED := sed -i
+endif
+ifeq ($(GOOS),darwin)
+	SED := sed -i ''
+endif
+ 
 ifeq ($(ROOT_PACKAGE),)
 	$(error the variable ROOT_PACKAGE must be set prior to including golang.mk)
 endif
@@ -40,7 +46,7 @@ ifeq (${BINS},)
   $(error Could not determine BINS, set ROOT_DIR or run in source dir)
 endif
 
-EXCLUDE_TESTS=github.com/shiqinfeng1/gomono-layout/test github.com/shiqinfeng1/gomono-layout/pkg/log github.com/shiqinfeng1/gomono-layout/third_party github.com/shiqinfeng1/gomono-layout/internal/pump/storage github.com/shiqinfeng1/gomono-layout/internal/pump github.com/shiqinfeng1/gomono-layout/internal/pkg/logger
+EXCLUDE_TESTS=github.com/shiqinfeng1/gomono-layout/pkg github.com/shiqinfeng1/gomono-layout/api github.com/shiqinfeng1/gomono-layout/third_party
 
 .PHONY: go.build.verify
 go.build.verify:
@@ -79,11 +85,10 @@ go.test: tools.verify.go-junit-report
 		egrep -v $(subst $(SPACE),'|',$(sort $(EXCLUDE_TESTS)))` 2>&1 | \
 		tee >(go-junit-report --set-exit-code >$(OUTPUT_DIR)/report.xml)
 # remove no need files from test coverage
-	@sed -i '' '/api/d' $(OUTPUT_DIR)/coverage.out 
-	@sed -i '' '/mock/d' $(OUTPUT_DIR)/coverage.out 
-	@sed -i '' '/tools/d' $(OUTPUT_DIR)/coverage.out 
-	@sed -i '' '/pkg/d' $(OUTPUT_DIR)/coverage.out 
-	@sed -i '' '/cmd/d' $(OUTPUT_DIR)/coverage.out 
+	@$(SED) '/api/d' $(OUTPUT_DIR)/coverage.out 
+	@$(SED) '/mock/d' $(OUTPUT_DIR)/coverage.out 
+	@$(SED) '/tools/d' $(OUTPUT_DIR)/coverage.out 
+	@$(SED) '/pkg/d' $(OUTPUT_DIR)/coverage.out 
 	@$(GO) tool cover -html=$(OUTPUT_DIR)/coverage.out -o $(OUTPUT_DIR)/coverage.html
 
 .PHONY: go.test.cover
