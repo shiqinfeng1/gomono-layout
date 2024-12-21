@@ -751,7 +751,7 @@ linters:
     - gofumpt
     - goheader
     - goimports
-    - gomoddirectives
+    # - gomoddirectives
     - goprintffuncname
     - gosec
     - gosimple

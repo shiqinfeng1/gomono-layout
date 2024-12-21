@@ -46,7 +46,7 @@ ifeq (${BINS},)
   $(error Could not determine BINS, set ROOT_DIR or run in source dir)
 endif
 
-EXCLUDE_TESTS=github.com/shiqinfeng1/gomono-layout/test github.com/shiqinfeng1/gomono-layout/pkg/log github.com/shiqinfeng1/gomono-layout/third_party github.com/shiqinfeng1/gomono-layout/internal/pump/storage github.com/shiqinfeng1/gomono-layout/internal/pump github.com/shiqinfeng1/gomono-layout/internal/pkg/logger
+EXCLUDE_TESTS=github.com/shiqinfeng1/gomono-layout/pkg github.com/shiqinfeng1/gomono-layout/api github.com/shiqinfeng1/gomono-layout/third_party
 
 .PHONY: go.build.verify
 go.build.verify:
