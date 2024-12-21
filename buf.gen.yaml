@@ -35,6 +35,7 @@ plugins:
 
   # - local: protoc-gen-openapi
   #   out: api/gen
+  #   opt: paths=source_relative
     
   - remote: buf.build/community/google-gnostic-openapi:v0.7.0
     out: api/gen

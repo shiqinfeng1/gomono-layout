@@ -17,11 +17,9 @@ ifneq ($(DLV),)
 endif
 GO_BUILD_FLAGS += -ldflags "$(GO_LDFLAGS)"
 
-GOOS := $(shell go env GOOS)
 ifeq ($(GOOS),windows)
 	GO_OUT_EXT := .exe
 endif
-
 ifeq ($(GOOS),linux)
 	SED := sed -i
 endif
