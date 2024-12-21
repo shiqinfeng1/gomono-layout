@@ -53,7 +53,10 @@ func main() {
 	// WithValues使用
 	lv := log.WithValues("X-Request-ID", "7a7b9f24-4cae-4b2a-9464-69088b45b904")
 	lv.Infow("Info message printed with [WithValues] logger")
-	lv.Infow("Debug message printed with [WithValues] logger")
+	lv.Debugw("Debug message printed with [WithValues] logger")
+	lv2 := log.WithValues("22222", "11111111111", "3333", "444")
+	lv2.Infow("Info message printed with [WithValues] logger")
+	lv2.Debugw("Debug message printed with [WithValues] logger", "550", "666")
 
 	// Context使用
 	ctx := lv.WithContext(context.Background())

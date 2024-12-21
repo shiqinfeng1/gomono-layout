@@ -89,7 +89,6 @@ go.test: tools.verify.go-junit-report
 	@$(SED) '/mock/d' $(OUTPUT_DIR)/coverage.out 
 	@$(SED) '/tools/d' $(OUTPUT_DIR)/coverage.out 
 	@$(SED) '/pkg/d' $(OUTPUT_DIR)/coverage.out 
-	@$(SED) '/cmd/d' $(OUTPUT_DIR)/coverage.out 
 	@$(GO) tool cover -html=$(OUTPUT_DIR)/coverage.out -o $(OUTPUT_DIR)/coverage.html
 
 .PHONY: go.test.cover

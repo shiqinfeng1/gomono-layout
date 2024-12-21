@@ -1,0 +1,66 @@
+// Copyright 2024 slw 150627601@qq.com . All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package trainer;
+
+option go_package = "github.com/shiqinfeng1/gomono-layout/api/gen/trainer/v1;v1";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service TrainerService {
+  rpc IsHourAvailable(IsHourAvailableRequest) returns (IsHourAvailableResponse) {}
+  rpc ScheduleTraining(UpdateHourRequest) returns (google.protobuf.Empty) {}
+  rpc CancelTraining(UpdateHourRequest) returns (google.protobuf.Empty) {}
+
+  rpc GetTrainerAvailableHours(GetTrainerAvailableHoursRequest) returns (GetTrainerAvailableHoursRespone) {
+  }
+
+  rpc MakeHourAvailable(MakeHourAvailableRequest) returns (google.protobuf.Empty) {
+  }
+
+  rpc MakeHourUnavailable(MakeHourUnavailableRequest) returns (google.protobuf.Empty) {
+  }
+}
+
+message IsHourAvailableRequest {
+  google.protobuf.Timestamp time = 1;
+}
+
+message IsHourAvailableResponse {
+  bool is_available = 1;
+}
+
+message UpdateHourRequest {
+  google.protobuf.Timestamp time = 1;
+}
+
+message GetTrainerAvailableHoursRequest {
+  google.protobuf.Timestamp date_from = 1;
+	google.protobuf.Timestamp date_to = 2;
+}
+
+message GetTrainerAvailableHoursRespone {
+  message Hour {
+    bool available      = 1;      
+	  bool has_training_scheduled    = 2; 
+	  google.protobuf.Timestamp hour   = 3;
+  }
+  message Date {
+    google.protobuf.Timestamp date  = 1;  
+    bool Has_free_hours = 2;  
+    repeated Hour hours  = 3;  
+  }
+  repeated Date dates = 1;
+}
+
+message MakeHourAvailableRequest {
+  repeated google.protobuf.Timestamp time = 1;
+}
+
+message MakeHourUnavailableRequest {
+  repeated google.protobuf.Timestamp time = 1;
+}

@@ -12,7 +12,7 @@ breaking:
     - FILE
 
 modules:
-  - path: api/protos
+  - path: api/protobufs
 
 deps:
   - 'buf.build/googleapis/googleapis'

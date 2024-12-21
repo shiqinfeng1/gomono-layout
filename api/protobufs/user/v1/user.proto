@@ -1,0 +1,31 @@
+// Copyright 2024 slw 150627601@qq.com . All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/shiqinfeng1/gomono-layout/api/gen/trainer/v1;v1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service UserService {
+  rpc GetTrainingBalance(GetTrainingBalanceRequest) returns (GetTrainingBalanceResponse) {
+  }
+  rpc UpdateTrainingBalance(UpdateTrainingBalanceRequest) returns (google.protobuf.Empty) {}
+}
+
+message GetTrainingBalanceRequest {
+  string user_id = 1;
+}
+
+message GetTrainingBalanceResponse {
+  int64 amount = 1;
+}
+
+message UpdateTrainingBalanceRequest {
+  string user_id = 1;
+  int64 amount_change = 2;
+}

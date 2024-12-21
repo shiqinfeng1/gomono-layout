@@ -153,7 +153,7 @@ workspace_root
 
     ```yaml
     modules:
-    - path: api/protos
+    - path: api/protobufs
     ```
 
 3. 设置项目依赖

@@ -43,13 +43,13 @@
     创建项目名称为helloworld，服务名称为user的项目：
 
     ```bash
-    $kratos new helloworld --service user  
+    $gomonoctl newservice helloworld --service user  
     ```
 
-3. 在当前仓库添加一个新的服务
+3. 在项目名称为helloworld仓库中添加一个新的服务
 
     ```bash
-    $kratos new helloworld --service order  
+    $gomonoctl newservice helloworld --service order  
     ```
 
 ### 构建
