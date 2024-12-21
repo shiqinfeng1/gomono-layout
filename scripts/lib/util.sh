@@ -262,7 +262,7 @@ util::remove-gen-docs() {
 # repo, e.g. "upstream" or "origin".
 util::git_upstream_remote_name() {
   git remote -v | grep fetch |\
-    grep -E 'github.com[/:]marmotedu/iam|marmotedu.io/iam' |\
+    grep -E 'github.com[/:]shiqinfeng1/gomono-layout|marmotedu.io/iam' |\
     head -n 1 | awk '{print $1}'
 }
 

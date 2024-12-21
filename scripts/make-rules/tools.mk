@@ -9,7 +9,7 @@
 TOOLS ?=$(BLOCKER_TOOLS) $(CRITICAL_TOOLS) $(TRIVIAL_TOOLS)
 
 BIN := /usr/local/bin
-BUF_VERSION := 1.45.0
+BUF_VERSION := 1.47.2
 
 HOST_ARCH := $(shell uname -m)
 HOST_OS := $(shell uname -s)
